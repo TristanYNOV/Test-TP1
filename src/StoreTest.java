@@ -17,6 +17,22 @@ public class StoreTest {
     }
 
     @Test
+    public void testArticleAlreadyExist() {
+        Article a1 = new Article(1, "Webcam", 35.0);
+        Article a2 = new Article(1, "Microphone", 40.0); // Même ID
+
+        Store store = new Store();
+        store.addArticle(a1);
+
+        // On s'attend à une exception lors du deuxième ajout
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            store.addArticle(a2);
+        });
+
+        assertEquals("Un article avec l'ID 1 existe déjà.", thrown.getMessage());
+    }
+
+    @Test
     public void testAddManyArticles() {
         Store store = new Store();
         Article a1 = new Article(1, "Clé USB", 8.99);
@@ -30,6 +46,20 @@ public class StoreTest {
         assertTrue(result.contains(a2));
     }
 
+    @Test
+    public void testAddManyWithOneWrong() {
+        Article a1 = new Article(1, "Disque dur", 80.0);
+        Article a2 = new Article(2, "SSD", 100.0);
+        Article a3 = new Article(1, "Clé USB", 15.0); // Doublon d'ID avec a1
+
+        Store store = new Store(List.of(a1));
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            store.addArticles(List.of(a2, a3));
+        });
+
+        assertEquals("Un article avec l'ID 1 existe déjà.", thrown.getMessage());
+    }
 
 
     @Test

@@ -4,23 +4,31 @@ import java.util.List;
 public class Store {
     private List<Article> articles;
 
-    // Constructeur par défaut
     public Store() {
         this.articles = new ArrayList<>();
     }
 
-    // Constructeur avec état initial
     public Store(List<Article> initialArticles) {
         // Copie défensive pour éviter les effets de bord
         this.articles = new ArrayList<>(initialArticles);
     }
 
     public void addArticle(Article article) {
+        boolean alreadyExists = articles.stream()
+                .anyMatch(a -> a.getId() == article.getId());
+
+        if (alreadyExists) {
+            throw new IllegalArgumentException("Un article avec l'ID " + article.getId() + " existe déjà.");
+        }
+
         articles.add(article);
     }
 
+
     public void addArticles(List<Article> articlesToAdd) {
-        this.articles.addAll(articlesToAdd);
+        for (Article article : articlesToAdd) {
+            addArticle(article);
+        }
     }
 
 
